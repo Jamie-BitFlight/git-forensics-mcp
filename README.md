@@ -64,3 +64,18 @@ All tools output JSON files containing:
 ## Usage
 
 The server runs as an MCP service and can be integrated with any MCP-compatible client. All analysis results are written to specified output files in JSON format.
+
+## Contributing and License
+
+This project is licensed under the Apache License, Version 2.0 - see the [LICENSE.txt](LICENSE.txt) file for details.
+
+### Collaboration Welcome
+Forks and contributions welcome. 
+
+All contributions will be under the Apache License 2.0. This permissive license allows you to:
+- Use the code commercially
+- Modify and distribute the code
+- Create derivative works
+- Include in other projects
+
+Copyright 2025. Licensed under the Apache License, Version 2.0; you may not use this project except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
