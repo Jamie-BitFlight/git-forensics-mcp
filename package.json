@@ -1,0 +1,18 @@
+{
+  "name": "git-analysis-server",
+  "version": "0.1.0",
+  "description": "MCP server for ONLY for git repository analysis, NOT for general github or git usage",
+  "type": "module",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "tsc && chmod +x build/index.js",
+    "start": "node build/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
