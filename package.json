@@ -1,7 +1,7 @@
 {
-  "name": "git-analysis-server",
+  "name": "git-forensics-mcp",
   "version": "0.1.0",
-  "description": "MCP server for ONLY for git repository analysis, NOT for general github or git usage",
+  "description": "MCP server for deep git repository analysis and investigation, providing insights into branch relationships, merge strategies, and development patterns",
   "type": "module",
   "main": "build/index.js",
   "scripts": {
