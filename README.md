@@ -1,6 +1,6 @@
-# Git Analysis MCP Server
+# Git Forensics MCP
 
-A specialized Model Context Protocol (MCP) server that provides detailed git repository analysis capabilities. This tool focuses solely on git repository analysis and does not handle general GitHub or git operations.
+A specialized Model Context Protocol (MCP) server for deep git repository investigation and analysis. This forensics tool provides detailed insights into repository history, branch relationships, and development patterns, focusing solely on git repository analysis rather than general GitHub or git operations.
 
 ## Features
 
