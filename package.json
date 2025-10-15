@@ -1,9 +1,19 @@
 {
-  "name": "git-forensics-mcp",
+  "name": "@jamie-bitflight/git-forensics-mcp",
   "version": "0.1.0",
   "description": "MCP server for deep git repository analysis and investigation, providing insights into branch relationships, merge strategies, and development patterns",
   "type": "module",
   "main": "build/index.js",
+  "bin": {
+    "git-forensics-mcp": "./build/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Jamie-BitFlight/git-forensics-mcp.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "build": "tsc && chmod +x build/index.js",
     "start": "node build/index.js"
@@ -13,6 +23,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "nx": "^21.6.4",
     "typescript": "^5.0.0"
   }
 }

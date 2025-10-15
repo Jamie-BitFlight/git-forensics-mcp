@@ -61,6 +61,29 @@ All tools output JSON files containing:
 - Node.js
 - Git (must be installed and accessible)
 
+## Installation
+
+This package is published to GitHub Packages. To install:
+
+1. **Set up authentication** - Add your GitHub token to your environment:
+   ```bash
+   # Add to ~/.bashrc or ~/.zshrc for persistence
+   export GITHUB_TOKEN=your_personal_access_token_here
+   ```
+   Your token needs the `read:packages` scope.
+
+2. **Install via npx** - The package can be run directly:
+   ```bash
+   npx @jamie-bitflight/git-forensics-mcp
+   ```
+
+3. **Add to Claude Code** - Configure as an MCP server:
+   ```bash
+   claude mcp add --scope user git-forensics -- npx -y @jamie-bitflight/git-forensics-mcp
+   ```
+
+The repository includes a `.npmrc` file that automatically uses your `GITHUB_TOKEN` environment variable for authentication with GitHub Packages.
+
 ## Usage
 
 The server runs as an MCP service and can be integrated with any MCP-compatible client. All analysis results are written to specified output files in JSON format.
