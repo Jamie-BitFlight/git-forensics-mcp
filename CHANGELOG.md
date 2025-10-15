@@ -1,3 +1,17 @@
+## 0.3.0 (2025-10-15)
+
+### 🚀 Features
+
+- implement Nx Release orchestration for automated versioning and publishing ([#2](https://github.com/Jamie-BitFlight/git-forensics-mcp/pull/2))
+
+### 🩹 Fixes
+
+- add packages field to pnpm-workspace.yaml for proper cache setup ([#3](https://github.com/Jamie-BitFlight/git-forensics-mcp/pull/3))
+
+### ❤️ Thank You
+
+- Jamie Nelson @Jamie-BitFlight
+
 ## 0.2.0 (2025-10-15)
 
 ### 🚀 Features
