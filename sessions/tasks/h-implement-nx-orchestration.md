@@ -1,7 +1,7 @@
 ---
 name: h-implement-nx-orchestration
 branch: feature/h-implement-nx-orchestration
-status: pending
+status: in-progress
 created: 2025-10-15
 ---
 
