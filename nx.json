@@ -3,11 +3,7 @@
   "release": {
     "projects": ["*"],
     "version": {
-      "conventionalCommits": true,
-      "generatorOptions": {
-        "packageRoot": ".",
-        "currentVersionResolver": "git-tag"
-      }
+      "conventionalCommits": true
     },
     "changelog": {
       "projectChangelogs": {
