@@ -8,5 +8,35 @@
       "cache": true
     }
   },
-  "nxCloudId": "68f019698282dc4bcd0803b8"
+  "release": {
+    "version": {
+      "conventionalCommits": true
+    },
+    "changelog": {
+      "workspaceChangelog": {
+        "createRelease": "github"
+      }
+    },
+    "git": {
+      "commit": true,
+      "tag": true
+    }
+  },
+  "nxCloudId": "68f019698282dc4bcd0803b8",
+  "plugins": [
+    {
+      "plugin": "@nx/js/typescript",
+      "options": {
+        "typecheck": {
+          "targetName": "typecheck"
+        },
+        "build": {
+          "targetName": "build",
+          "configName": "tsconfig.lib.json",
+          "buildDepsName": "build-deps",
+          "watchDepsName": "watch-deps"
+        }
+      }
+    }
+  ]
 }
