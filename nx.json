@@ -1,14 +1,13 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "release": {
-    "projects": ["*"],
     "version": {
       "conventionalCommits": true
     },
     "changelog": {
-      "projectChangelogs": {
+      "workspaceChangelog": {
         "createRelease": "github",
-        "file": "{projectRoot}/CHANGELOG.md",
+        "file": "CHANGELOG.md",
         "renderOptions": {
           "authors": true,
           "commitReferences": true,
