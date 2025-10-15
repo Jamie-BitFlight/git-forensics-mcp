@@ -180,28 +180,28 @@ class GitAnalysisServer {
       try {
         switch (request.params.name) {
           case 'get_branch_overview': {
-            const args = request.params.arguments as BranchOverviewArgs;
+            const args = request.params.arguments as unknown as BranchOverviewArgs;
             if (!args?.repoPath || !args?.branches || !args?.outputPath) {
               throw new McpError(ErrorCode.InvalidParams, 'Missing required parameters');
             }
             return await this.handleBranchOverview(args);
           }
           case 'analyze_time_period': {
-            const args = request.params.arguments as TimePeriodArgs;
+            const args = request.params.arguments as unknown as TimePeriodArgs;
             if (!args?.repoPath || !args?.branches || !args?.timeRange || !args?.outputPath) {
               throw new McpError(ErrorCode.InvalidParams, 'Missing required parameters');
             }
             return await this.handleTimePeriodAnalysis(args);
           }
           case 'analyze_file_changes': {
-            const args = request.params.arguments as FileChangesArgs;
+            const args = request.params.arguments as unknown as FileChangesArgs;
             if (!args?.repoPath || !args?.branches || !args?.files || !args?.outputPath) {
               throw new McpError(ErrorCode.InvalidParams, 'Missing required parameters');
             }
             return await this.handleFileChangesAnalysis(args);
           }
           case 'get_merge_recommendations': {
-            const args = request.params.arguments as MergeRecommendationsArgs;
+            const args = request.params.arguments as unknown as MergeRecommendationsArgs;
             if (!args?.repoPath || !args?.branches || !args?.outputPath) {
               throw new McpError(ErrorCode.InvalidParams, 'Missing required parameters');
             }

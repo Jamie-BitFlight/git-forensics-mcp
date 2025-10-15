@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "release": {
+    "projects": ["*"],
+    "version": {
+      "conventionalCommits": true,
+      "generatorOptions": {
+        "packageRoot": ".",
+        "currentVersionResolver": "git-tag"
+      }
+    },
+    "changelog": {
+      "projectChangelogs": {
+        "createRelease": "github",
+        "file": "{projectRoot}/CHANGELOG.md",
+        "renderOptions": {
+          "authors": true,
+          "commitReferences": true,
+          "versionTitleDate": true
+        }
+      }
+    },
+    "git": {
+      "commit": true,
+      "commitMessage": "chore(release): {version} [skip ci]",
+      "tag": true,
+      "tagMessage": "v{version}"
+    }
+  }
+}
