@@ -1,3 +1,13 @@
+## 0.3.2 (2025-10-16)
+
+### 🩹 Fixes
+
+- switch from GitHub Packages to npmjs.org for publishing ([4c348b1](https://github.com/Jamie-BitFlight/git-forensics-mcp/commit/4c348b1))
+
+### ❤️ Thank You
+
+- Jamie McGregor Nelson
+
 ## 0.3.1 (2025-10-16)
 
 ### 🩹 Fixes
