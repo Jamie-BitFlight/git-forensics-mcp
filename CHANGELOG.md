@@ -1,3 +1,13 @@
+## 0.3.3 (2025-10-16)
+
+### 🩹 Fixes
+
+- add publishConfig for public access to scoped package ([45b364a](https://github.com/Jamie-BitFlight/git-forensics-mcp/commit/45b364a))
+
+### ❤️ Thank You
+
+- Jamie McGregor Nelson
+
 ## 0.3.2 (2025-10-16)
 
 ### 🩹 Fixes
