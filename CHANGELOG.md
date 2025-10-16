@@ -1,3 +1,14 @@
+## 0.3.1 (2025-10-16)
+
+### 🩹 Fixes
+
+- add packages field to pnpm-workspace.yaml for proper cache setup ([21d5d5e](https://github.com/Jamie-BitFlight/git-forensics-mcp/commit/21d5d5e))
+- use GH_RELEASE_TOKEN to enable publish workflow trigger ([#25702](https://github.com/Jamie-BitFlight/git-forensics-mcp/issues/25702), [#1545](https://github.com/Jamie-BitFlight/git-forensics-mcp/issues/1545))
+
+### ❤️ Thank You
+
+- Jamie McGregor Nelson
+
 ## 0.3.0 (2025-10-15)
 
 ### 🚀 Features

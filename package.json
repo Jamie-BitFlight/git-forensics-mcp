@@ -1,6 +1,6 @@
 {
   "name": "@jamie-bitflight/git-forensics-mcp",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "MCP server for deep git repository analysis and investigation, providing insights into branch relationships, merge strategies, and development patterns",
   "type": "module",
   "main": "build/index.js",
