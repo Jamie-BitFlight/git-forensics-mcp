@@ -11,6 +11,9 @@
     "type": "git",
     "url": "https://github.com/Jamie-BitFlight/git-forensics-mcp.git"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc && chmod +x build/index.js",
     "start": "node build/index.js"
