@@ -9,10 +9,7 @@ importers:
     dependencies:
       "@modelcontextprotocol/sdk":
         specifier: latest
-        version: 1.20.0
-      ts-node:
-        specifier: ^10.9.2
-        version: 10.9.2(@swc/core@1.13.5(@swc/helpers@0.5.17))(@types/node@22.18.11)(typescript@5.9.3)
+        version: 1.20.1
     devDependencies:
       "@modelcontextprotocol/inspector":
         specifier: ^0.17.1
@@ -41,6 +38,9 @@ importers:
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@swc/core@1.13.5(@swc/helpers@0.5.17))(@types/node@22.18.11)(typescript@5.9.3)
       typescript:
         specifier: ^5.0.0
         version: 5.9.3
@@ -1012,13 +1012,6 @@ packages:
       }
     engines: { node: ">=22.7.5" }
     hasBin: true
-
-  "@modelcontextprotocol/sdk@1.20.0":
-    resolution:
-      {
-        integrity: sha512-kOQ4+fHuT4KbR2iq2IjeV32HiihueuOf1vJkq18z08CLZ1UQrTc8BXJpVfxZkq45+inLLD+D4xx4nBjUelJa4Q==,
-      }
-    engines: { node: ">=18" }
 
   "@modelcontextprotocol/sdk@1.20.1":
     resolution:
@@ -5132,23 +5125,6 @@ snapshots:
       - supports-color
       - typescript
       - utf-8-validate
-
-  "@modelcontextprotocol/sdk@1.20.0":
-    dependencies:
-      ajv: 6.12.6
-      content-type: 1.0.5
-      cors: 2.8.5
-      cross-spawn: 7.0.6
-      eventsource: 3.0.7
-      eventsource-parser: 3.0.6
-      express: 5.1.0
-      express-rate-limit: 7.5.1(express@5.1.0)
-      pkce-challenge: 5.0.0
-      raw-body: 3.0.1
-      zod: 3.25.76
-      zod-to-json-schema: 3.24.6(zod@3.25.76)
-    transitivePeerDependencies:
-      - supports-color
 
   "@modelcontextprotocol/sdk@1.20.1":
     dependencies:
