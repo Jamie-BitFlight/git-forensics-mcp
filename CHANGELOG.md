@@ -1,3 +1,18 @@
+## 0.4.0 (2025-10-17)
+
+### 🚀 Features
+
+- implement Nx Release orchestration for automated versioning and publishing ([#8](https://github.com/Jamie-BitFlight/git-forensics-mcp/pull/8))
+- complete nx orchestration setup with release automation ([61645df](https://github.com/Jamie-BitFlight/git-forensics-mcp/commit/61645df))
+
+### 🩹 Fixes
+
+- update pnpm-lock.yaml to fix CI frozen-lockfile error ([#18594743911](https://github.com/Jamie-BitFlight/git-forensics-mcp/issues/18594743911))
+
+### ❤️ Thank You
+
+- Jamie Nelson @Jamie-BitFlight
+
 ## 0.3.3 (2025-10-16)
 
 ### 🩹 Fixes
