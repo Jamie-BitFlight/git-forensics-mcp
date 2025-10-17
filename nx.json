@@ -2,9 +2,7 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
     "build": {
-      "outputs": [
-        "{projectRoot}/dist"
-      ],
+      "outputs": ["{projectRoot}/dist"],
       "cache": true
     }
   },
@@ -22,7 +20,7 @@
       "tag": true
     }
   },
-  "nxCloudId": "68f019698282dc4bcd0803b8",
+  "nxCloudId": "68f241b444b09f272c100239",
   "plugins": [
     {
       "plugin": "@nx/js/typescript",

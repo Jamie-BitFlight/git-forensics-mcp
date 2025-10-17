@@ -17,17 +17,18 @@
   "scripts": {
     "build": "tsc && chmod +x build/index.js",
     "start": "ts-node src/index.ts",
-    "inspect:method": "mcp-inspector --cli ts-node src/index.ts --method",
+    "inspect:method": "mcp-inspector --cli pnpm start --method",
     "tools:list": "pnpm inspect:method tools/list",
     "prepare": "husky",
+    "prettier": "prettier",
     "format": "prettier --write \"**/*.{ts,js,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,js,json,md}\""
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "latest",
-    "ts-node": "^10.9.2"
+    "@modelcontextprotocol/sdk": "latest"
   },
   "devDependencies": {
+    "ts-node": "^10.9.2",
     "@modelcontextprotocol/inspector": "^0.17.1",
     "@nx/js": "21.6.5",
     "@swc-node/register": "~1.11.1",
