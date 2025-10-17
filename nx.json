@@ -20,7 +20,7 @@
       "tag": true
     }
   },
-  "nxCloudId": "68f241b444b09f272c100239",
+  "nxCloudId": "68f24bee9c26fa57d50d4ecc",
   "plugins": [
     {
       "plugin": "@nx/js/typescript",

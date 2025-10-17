@@ -1,5 +1,5 @@
 # shellcheck disable=SC2148,SC2046
 command -v pnpm > /dev/null 2>&1 && { corepack enable pnpm || echo "pnpm not found, skipping prettier"; }
 pnpm prettier $(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g') --write --ignore-unknown
-command -v docker > /dev/null 2>&1 && docker run --rm -v "$(pwd):/path" zricethezav/gitleaks:latest protect --source='/path' --staged --no-banner -v || echo "Docker not found, skipping gitleaks scan" 
+{ command -v docker > /dev/null 2>&1 && docker run --rm -i -v "$(pwd):/path" zricethezav/gitleaks:latest protect --source='/path' --staged --no-banner -v; } || echo "Docker not found, skipping gitleaks scan" 
 git update-index --again
