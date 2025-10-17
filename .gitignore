@@ -82,6 +82,9 @@ sessions/.archived/
 .nx/cache
 .nx/workspace-data
 
+# Generated during release
+CHANGELOG.md
+
 
 
 .cursor/rules/nx-rules.mdc
