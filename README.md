@@ -260,14 +260,12 @@ All tools generate JSON files with consistent structure:
 
 - **Node.js 20+** - Required to run the MCP server
 - **Git** - Must be installed and accessible via PATH
-- **MCP-compatible client** - Such as Claude Code or Claude Desktop
+- **MCP-compatible client** - Such as Cursor, Gemini, Codex, Claude Code or Claude Desktop
 
 ### For Development
 
 - **Node.js 20+** - As specified in GitHub Actions workflows
 - **pnpm 9+** - Package manager ([installation guide](https://pnpm.io/installation))
-- **TypeScript 5.0+** - Compilation toolchain
-- **ts-node 10.9+** - For running TypeScript directly during development
 
 ## Contributing
 
@@ -345,7 +343,7 @@ This project uses automated semantic versioning via Nx Release with conventional
 
 #### Conventional Commit Format
 
-```
+```text
 <type>(<scope>): <subject>
 
 <body>
@@ -392,7 +390,7 @@ docs: update installation instructions
 
 You can validate any published version using the MCP Inspector in CLI mode:
 
-**Step 1: List available tools from published package**
+#### Step 1: List available tools from published package
 
 ```bash
 npx @modelcontextprotocol/inspector --cli npx @jamie-bitflight/git-forensics-mcp@VERSION --method tools/list
@@ -405,7 +403,7 @@ Expected output: JSON showing 4 tools with schemas:
 - `analyze_file_changes`
 - `get_merge_recommendations`
 
-**Step 2: Test a tool invocation**
+#### Step 2: Test a tool invocation
 
 ```bash
 npx @modelcontextprotocol/inspector --cli npx @jamie-bitflight/git-forensics-mcp@VERSION \
@@ -418,7 +416,7 @@ npx @modelcontextprotocol/inspector --cli npx @jamie-bitflight/git-forensics-mcp
 
 Expected output: Success message indicating analysis written to file
 
-**Step 3: Verify output file contains valid analysis**
+#### Step 3: Verify output file contains valid analysis
 
 ```bash
 cat /tmp/test.json
@@ -426,7 +424,7 @@ cat /tmp/test.json
 
 Expected output: Valid JSON with overview array and summary statistics
 
-**Validation Checklist:**
+#### Validation Checklist
 
 - Package installs via npx from npmjs.org
 - MCP server responds to protocol requests
@@ -436,7 +434,7 @@ Expected output: Valid JSON with overview array and summary statistics
 
 ### Project Structure
 
-```
+```text
 git-forensics-mcp/
 ├── src/
 │   └── index.ts          # Single-file MCP server implementation
@@ -500,4 +498,4 @@ All contributions will be licensed under the Apache License 2.0. By submitting a
 
 ---
 
-Copyright 2025. Licensed under the Apache License, Version 2.0; you may not use this project except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+Copyright 2025. Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0); you may not use this project except in compliance with the License.
