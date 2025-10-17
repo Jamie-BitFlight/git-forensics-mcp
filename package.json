@@ -16,18 +16,27 @@
   },
   "scripts": {
     "build": "tsc && chmod +x build/index.js",
-    "start": "node build/index.js"
+    "start": "ts-node src/index.ts",
+    "inspect:method": "mcp-inspector --cli ts-node src/index.ts --method",
+    "tools:list": "pnpm inspect:method tools/list",
+    "prepare": "husky",
+    "format": "prettier --write \"**/*.{ts,js,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,js,json,md}\""
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "latest"
+    "@modelcontextprotocol/sdk": "latest",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
+    "@modelcontextprotocol/inspector": "^0.17.1",
     "@nx/js": "21.6.5",
-    "@swc-node/register": "~1.9.1",
-    "@swc/core": "~1.5.7",
-    "@swc/helpers": "~0.5.11",
-    "@types/node": "^20.0.0",
+    "@swc-node/register": "~1.11.1",
+    "@swc/core": "~1.13.5",
+    "@swc/helpers": "~0.5.17",
+    "@types/node": "^22.0.0",
+    "husky": "^9.1.7",
     "nx": "21.6.5",
+    "prettier": "^3.6.2",
     "typescript": "^5.0.0"
   },
   "nx": {}

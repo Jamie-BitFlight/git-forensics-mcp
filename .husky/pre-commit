@@ -1,0 +1,4 @@
+# shellcheck disable=SC2148,SC2046
+prettier $(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g') --write --ignore-unknown
+docker run --rm -v "$(pwd):/path" zricethezav/gitleaks:latest protect --source='/path' --staged --no-banner -v
+git update-index --again
