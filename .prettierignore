@@ -1,0 +1,6 @@
+sessions
+.claude/
+.cursor/
+.vscode/
+*.lock
+**/node_modules
