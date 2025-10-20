@@ -1,9 +1,14 @@
 name: Release
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
+    paths:
+      # ignore push events that only include package.json or CHANGELOG.md files
+      - "!package.json"
+      - "!CHANGELOG.md"
 
 permissions:
   contents: write
@@ -14,13 +19,19 @@ permissions:
 jobs:
   version:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
+      packages: write
+      attestations: write
+      id-token: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          lfs: true
           token: ${{ secrets.GH_RELEASE_TOKEN }}
+          filter: tree:0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -36,15 +47,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm run build
-
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+      - uses: nrwl/nx-set-shas@v4
+        with:
+          gh-token: ${{ secrets.GH_RELEASE_TOKEN }}
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
 
       - name: Version and Tag
         env:
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
-        run: pnpm nx release --skip-publish
+        run: pnpm dlx nx@latest release --skip-publish --verbose --yes
