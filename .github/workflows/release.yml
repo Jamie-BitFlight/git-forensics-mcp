@@ -47,6 +47,4 @@ jobs:
       - name: Version and Tag
         env:
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
-        run: |
-          pnpm nx release --skip-publish
-          git push && git push --tags
+        run: pnpm nx release --skip-publish
