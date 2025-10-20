@@ -17,7 +17,8 @@
     },
     "git": {
       "commit": true,
-      "tag": true
+      "tag": true,
+      "push": true
     }
   },
   "nxCloudId": "68f24bee9c26fa57d50d4ecc",
