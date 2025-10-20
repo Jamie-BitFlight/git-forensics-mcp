@@ -57,7 +57,7 @@ class GitAnalysisServer {
     );
 
     this.setupToolHandlers();
-    
+
     this.server.onerror = (error) => console.error('[MCP Error]', error);
     process.on('SIGINT', async () => {
       await this.server.close();
@@ -208,10 +208,7 @@ class GitAnalysisServer {
             return await this.handleMergeRecommendations(args);
           }
           default:
-            throw new McpError(
-              ErrorCode.MethodNotFound,
-              `Unknown tool: ${request.params.name}`
-            );
+            throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${request.params.name}`);
         }
       } catch (error) {
         return {
@@ -228,16 +225,18 @@ class GitAnalysisServer {
   }
 
   private async handleBranchOverview(args: BranchOverviewArgs) {
-    const overview = args.branches.map(branch => {
+    const overview = args.branches.map((branch) => {
       const lastCommit = this.getLastCommit(args.repoPath, branch);
       const commitCount = this.getCommitCount(args.repoPath, branch);
-      const mergeBase = args.branches.map(otherBranch => {
-        if (otherBranch === branch) return null;
-        return {
-          branch: otherBranch,
-          base: this.getMergeBase(args.repoPath, branch, otherBranch),
-        };
-      }).filter((base): base is NonNullable<typeof base> => base !== null);
+      const mergeBase = args.branches
+        .map((otherBranch) => {
+          if (otherBranch === branch) return null;
+          return {
+            branch: otherBranch,
+            base: this.getMergeBase(args.repoPath, branch, otherBranch),
+          };
+        })
+        .filter((base): base is NonNullable<typeof base> => base !== null);
 
       return {
         branch,
@@ -265,7 +264,7 @@ class GitAnalysisServer {
   }
 
   private async handleTimePeriodAnalysis(args: TimePeriodArgs) {
-    const analysis = args.branches.map(branch => {
+    const analysis = args.branches.map((branch) => {
       const commits = this.getCommitsInRange(args.repoPath, branch, args.timeRange);
       return {
         branch,
@@ -292,8 +291,8 @@ class GitAnalysisServer {
   }
 
   private async handleFileChangesAnalysis(args: FileChangesArgs) {
-    const analysis = args.files.map(file => {
-      const changes = args.branches.map(branch => ({
+    const analysis = args.files.map((file) => {
+      const changes = args.branches.map((branch) => ({
         branch,
         history: this.getFileHistory(args.repoPath, branch, file),
       }));
@@ -342,29 +341,24 @@ class GitAnalysisServer {
   }
 
   private getLastCommit(repoPath: string, branch: string) {
-    const output = execSync(
-      `cd "${repoPath}" && git log -1 --format="%H|%aI|%s" ${branch}`,
-      { encoding: 'utf8' }
-    ).trim();
+    const output = execSync(`cd "${repoPath}" && git log -1 --format="%H|%aI|%s" ${branch}`, {
+      encoding: 'utf8',
+    }).trim();
     const [hash, date, message] = output.split('|');
     return { hash, date, message, branch };
   }
 
   private getCommitCount(repoPath: string, branch: string): number {
     return parseInt(
-      execSync(
-        `cd "${repoPath}" && git rev-list --count ${branch}`,
-        { encoding: 'utf8' }
-      ).trim(),
+      execSync(`cd "${repoPath}" && git rev-list --count ${branch}`, { encoding: 'utf8' }).trim(),
       10
     );
   }
 
   private getMergeBase(repoPath: string, branch1: string, branch2: string): string {
-    return execSync(
-      `cd "${repoPath}" && git merge-base ${branch1} ${branch2}`,
-      { encoding: 'utf8' }
-    ).trim();
+    return execSync(`cd "${repoPath}" && git merge-base ${branch1} ${branch2}`, {
+      encoding: 'utf8',
+    }).trim();
   }
 
   private getCommitsInRange(
@@ -374,14 +368,18 @@ class GitAnalysisServer {
   ) {
     const output = execSync(
       `cd "${repoPath}" && git log --format="%H|%aI|%s" ` +
-      `--after="${timeRange.start}" --before="${timeRange.end}" ${branch}`,
+        `--after="${timeRange.start}" --before="${timeRange.end}" ${branch}`,
       { encoding: 'utf8' }
     );
 
-    return output.trim().split('\n').filter(Boolean).map(line => {
-      const [hash, date, message] = line.split('|');
-      return { hash, date, message, branch };
-    });
+    return output
+      .trim()
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => {
+        const [hash, date, message] = line.split('|');
+        return { hash, date, message, branch };
+      });
   }
 
   private getFileHistory(repoPath: string, branch: string, file: string) {
@@ -390,13 +388,19 @@ class GitAnalysisServer {
       { encoding: 'utf8' }
     );
 
-    return output.trim().split('\n').filter(Boolean).map(line => {
-      const [hash, date, message] = line.split('|');
-      return { hash, date, message, branch };
-    });
+    return output
+      .trim()
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => {
+        const [hash, date, message] = line.split('|');
+        return { hash, date, message, branch };
+      });
   }
 
-  private summarizeActivity(commits: Array<{ hash: string; date: string; message: string; branch: string }>) {
+  private summarizeActivity(
+    commits: Array<{ hash: string; date: string; message: string; branch: string }>
+  ) {
     return {
       totalCommits: commits.length,
       firstCommit: commits[commits.length - 1],
@@ -425,7 +429,12 @@ class GitAnalysisServer {
     return categories;
   }
 
-  private analyzeConflicts(branchChanges: Array<{ branch: string; history: Array<{ hash: string; date: string; message: string }> }>) {
+  private analyzeConflicts(
+    branchChanges: Array<{
+      branch: string;
+      history: Array<{ hash: string; date: string; message: string }>;
+    }>
+  ) {
     const overlaps = this.findOverlappingChanges(branchChanges);
     return {
       riskLevel: this.assessRiskLevel(overlaps),
@@ -433,24 +442,28 @@ class GitAnalysisServer {
     };
   }
 
-  private findOverlappingChanges(branchChanges: Array<{ branch: string; history: Array<{ date: string }> }>) {
+  private findOverlappingChanges(
+    branchChanges: Array<{ branch: string; history: Array<{ date: string }> }>
+  ) {
     const timeRanges = branchChanges.map(({ branch, history }) => ({
       branch,
       start: history[history.length - 1]?.date,
       end: history[0]?.date,
     }));
 
-    return timeRanges.flatMap((range1, i) => 
-      timeRanges.slice(i + 1).map(range2 => ({
-        branches: [range1.branch, range2.branch],
-        overlaps: this.datesOverlap(
-          new Date(range1.start),
-          new Date(range1.end),
-          new Date(range2.start),
-          new Date(range2.end)
-        ),
-      }))
-    ).filter(({ overlaps }) => overlaps);
+    return timeRanges
+      .flatMap((range1, i) =>
+        timeRanges.slice(i + 1).map((range2) => ({
+          branches: [range1.branch, range2.branch],
+          overlaps: this.datesOverlap(
+            new Date(range1.start),
+            new Date(range1.end),
+            new Date(range2.start),
+            new Date(range2.end)
+          ),
+        }))
+      )
+      .filter(({ overlaps }) => overlaps);
   }
 
   private datesOverlap(start1: Date, end1: Date, start2: Date, end2: Date): boolean {
@@ -464,20 +477,18 @@ class GitAnalysisServer {
   }
 
   private generateConflictReasons(overlaps: Array<{ branches: string[] }>) {
-    return overlaps.map(({ branches }) => 
-      `Parallel development detected between ${branches.join(' and ')}`
+    return overlaps.map(
+      ({ branches }) => `Parallel development detected between ${branches.join(' and ')}`
     );
   }
 
   private determineMergeStrategy(repoPath: string, branches: string[]) {
-    const commitCounts = branches.map(branch => ({
+    const commitCounts = branches.map((branch) => ({
       branch,
       count: this.getCommitCount(repoPath, branch),
     }));
 
-    const baseChoice = commitCounts.reduce((a, b) => 
-      a.count > b.count ? a : b
-    );
+    const baseChoice = commitCounts.reduce((a, b) => (a.count > b.count ? a : b));
 
     return {
       recommendedBase: baseChoice.branch,
@@ -492,7 +503,7 @@ class GitAnalysisServer {
   private assessConflictRisks(repoPath: string, branches: string[]) {
     const changedFiles = new Map<string, string[]>();
 
-    branches.forEach(branch => {
+    branches.forEach((branch) => {
       const files = execSync(
         `cd "${repoPath}" && git diff --name-only $(git merge-base ${branches[0]} ${branch})..${branch}`,
         { encoding: 'utf8' }
@@ -501,7 +512,7 @@ class GitAnalysisServer {
         .split('\n')
         .filter(Boolean);
 
-      files.forEach(file => {
+      files.forEach((file) => {
         const current = changedFiles.get(file) || [];
         changedFiles.set(file, [...current, branch]);
       });
@@ -541,9 +552,7 @@ class GitAnalysisServer {
       totalBranches: overview.length,
       totalCommits,
       averageCommitsPerBranch: Math.round(avgCommits),
-      mostActiveBranch: overview.reduce((a, b) => 
-        a.commitCount > b.commitCount ? a : b
-      ).branch,
+      mostActiveBranch: overview.reduce((a, b) => (a.commitCount > b.commitCount ? a : b)).branch,
     };
   }
 
@@ -580,23 +589,30 @@ class GitAnalysisServer {
     }>
   ) {
     const riskLevels = analysis.map(({ conflicts }) => conflicts.riskLevel);
-    
+
     return {
       totalFiles: analysis.length,
-      filesWithConflicts: riskLevels.filter(level => level !== 'low').length,
-      highRiskFiles: riskLevels.filter(level => level === 'high').length,
+      filesWithConflicts: riskLevels.filter((level) => level !== 'low').length,
+      highRiskFiles: riskLevels.filter((level) => level === 'high').length,
       recommendedReviewOrder: analysis
-        .sort((a, b) => this.riskToNumber(b.conflicts.riskLevel) - this.riskToNumber(a.conflicts.riskLevel))
+        .sort(
+          (a, b) =>
+            this.riskToNumber(b.conflicts.riskLevel) - this.riskToNumber(a.conflicts.riskLevel)
+        )
         .map(({ file }) => file),
     };
   }
 
   private riskToNumber(risk: string): number {
     switch (risk) {
-      case 'high': return 3;
-      case 'medium': return 2;
-      case 'low': return 1;
-      default: return 0;
+      case 'high':
+        return 3;
+      case 'medium':
+        return 2;
+      case 'low':
+        return 1;
+      default:
+        return 0;
     }
   }
 
