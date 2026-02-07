@@ -2,122 +2,149 @@
 
 **Analysis Date:** 2026-02-07
 
-## Git Integration
+## Overview
 
-**Local Git:**
-- Git is invoked via Node.js `execSync()` in `src/index.ts`
-- All git operations are local (repository analysis only)
-- Pattern: `execSync(\`cd "${repoPath}" && git ...\`, {encoding: 'utf8'})`
-- Operations include:
-  - `git log` - Commit history analysis
-  - `git rev-list --count` - Commit counting
-  - `git merge-base` - Common ancestor detection
-  - `git diff` - File change analysis
+This is a standalone MCP (Model Context Protocol) server with no external API integrations, databases, or third-party service dependencies. All operations are local to the machine running the server.
 
-## APIs & External Services
+## Git Operations
 
-**npm Registry:**
-- Package: @jamie-bitflight/git-forensics-mcp
-- Published via GitHub Actions workflow (`.github/workflows/publish.yml`)
-- Registry URL: https://registry.npmjs.org
-- Provenance: NPM_CONFIG_PROVENANCE enabled (attestations via SLSA)
+**Local Git Repository Analysis:**
+- Method: Synchronous execution via Node.js `child_process.execSync()`
+- Location: `src/index.ts` (GitAnalysisServer class)
+- Operations:
+  - Branch queries and comparisons
+  - Commit history analysis
+  - Merge conflict detection
+  - Time-range-based activity analysis
+  - File change tracking
 
-**GitHub API:**
-- Release creation: GitHub Release API integration
-- Used via Nx Release with `createRelease: "github"` (see `nx.json`)
-- Triggered by: GitHub Actions release event (`.github/workflows/publish.yml`)
-- Permissions: write access to releases
+**Git Commands Used:**
+- `git branch` - List and inspect branches
+- `git log` - Parse commit history
+- `git show` - Analyze specific commits
+- `git diff` - Compare branches and commits
+- `git merge-base` - Find common ancestors
 
-## Authentication & Secrets
+**Output Format:**
+- Results written as JSON to file paths specified by caller (not returned via API)
+- Location determined by `outputPath` parameter in tool arguments
 
-**GitHub:**
-- Token: GH_RELEASE_TOKEN (used in `.github/workflows/release.yml`)
-  - Used for: checkout with full history, Nx release operations
-  - Environment variable: `${{ secrets.GH_RELEASE_TOKEN }}`
+## Data Storage
 
-**npm:**
-- Token: NPM_TOKEN (used in `.github/workflows/publish.yml`)
-  - Registry URL configured in action: https://registry.npmjs.org
-  - Provenance enabled: Node OIDC token exchange
-  - Environment variable: `${{ secrets.NPM_TOKEN }}`
+**Persistence:**
+- Not applicable - server is stateless
+- Analysis results written to caller-specified file paths (JSON format)
+- No database, cache, or persistent state maintained
+
+**File I/O:**
+- Method: Node.js `fs.writeFileSync()`
+- Used to write analysis JSON output to `outputPath` specified by MCP tool callers
+- No other file storage integrations
+
+## Communication
+
+**MCP Protocol:**
+- Transport: stdio (standard input/output)
+- Format: JSON-RPC 2.0
+- Connection: Non-persistent stdio streams
+- Client: Any MCP-compatible client (e.g., Claude, other AI tools)
+- Location: `src/index.ts` uses `StdioServerTransport` from `@modelcontextprotocol/sdk`
+
+**Tool Interface:**
+- Tool registration: `ListToolsRequestSchema` handler at `src/index.ts`
+- Tool invocation: `CallToolRequestSchema` handler at `src/index.ts`
+- Four tools exposed:
+  - `get_branch_overview` - Branch state and relationships
+  - `analyze_time_period` - Activity analysis by date range
+  - `get_file_changes` - File modification tracking
+  - `get_merge_recommendations` - Merge strategy suggestions
+
+## Authentication & Identity
+
+**Auth Provider:**
+- Not applicable - local tool without authentication
+- No user identity or access control
+- Assumes local filesystem access for git repositories
+
+**Release Publishing:**
+- GitHub Actions uses `secrets.GH_RELEASE_TOKEN` for git operations
+- GitHub Actions uses `secrets.NPM_TOKEN` for npm registry authentication
+- Credentials: Not stored in codebase (managed as GitHub Secrets)
+
+## Monitoring & Observability
+
+**Error Tracking:**
+- None - No external error tracking service
+
+**Logging:**
+- Method: Direct `console.error()` for MCP server errors
+- Location: `src/index.ts` line 61: `this.server.onerror = (error) => console.error('[MCP Error]', error);`
+- Scope: MCP protocol errors only
+- No structured logging or external log aggregation
 
 ## CI/CD & Deployment
 
-**Hosting/Distribution:**
-- npm Public Registry - Primary distribution channel
-- Package scope: @jamie-bitflight (public)
-- Published as: @jamie-bitflight/git-forensics-mcp
+**Hosting:**
+- npm registry (`https://registry.npmjs.org`) - Published as `@jamie-bitflight/git-forensics-mcp`
+- GitHub repository (`https://github.com/Jamie-BitFlight/git-forensics-mcp.git`)
 
 **CI Pipeline:**
-- GitHub Actions - Orchestration platform
+- GitHub Actions (`.github/workflows/`)
+- Runners: `ubuntu-latest` (Linux)
 - Workflows:
-  - `.github/workflows/release.yml` - Version bumping and tagging
-  - `.github/workflows/publish.yml` - npm publication
-  - `.github/workflows/claude.yml` - (present but not documented in CLAUDE.md)
-  - `.github/workflows/claude-code-review.yml` - (present but not documented in CLAUDE.md)
+  - `release.yml` - Version bump and tag on main push (uses Nx Release + conventional commits)
+  - `publish.yml` - Publish to npm on GitHub release event
+  - `claude.yml` - Claude Code integration (automated)
+  - `claude-code-review.yml` - Code review integration (automated)
 
-**Release Process:**
-1. Push to `main` branch triggers `.github/workflows/release.yml`
-2. Nx Release determines version (conventional commits)
-3. Git tags created
-4. Release event triggers `.github/workflows/publish.yml`
-5. TypeScript build compiled
-6. pnpm publishes to npm registry
-7. GitHub Release created automatically
+**Build Process:**
+- Node.js 20 setup via `actions/setup-node@v4`
+- pnpm 9 setup via `pnpm/action-setup@v4`
+- TypeScript compilation: `pnpm build`
+- Dependency caching: `cache: pnpm`
 
-**Build Environment (GitHub Actions):**
-- Runner: ubuntu-latest
-- Node.js: 20.x
-- pnpm: 9.x
-- Cache: pnpm dependencies
+**Release Management:**
+- Tool: Nx Release with conventional commits
+- Versioning: Automatic semantic versioning
+- Release creation: GitHub Releases (via `createRelease: "github"`)
+- Changelog: Disabled (workspaceChangelog.file: false)
+- Provenance: npm attestation enabled (`NPM_CONFIG_PROVENANCE: true`)
+
+## Environment Configuration
+
+**Build Environment:**
+- Node.js version: 20.x
+- pnpm version: 9.x
+- Git: Required for analysis operations
+
+**GitHub Secrets Required (for CI/CD):**
+- `GH_RELEASE_TOKEN` - GitHub token for release operations (write permissions for contents, packages, issues, pull-requests)
+- `NPM_TOKEN` - npm authentication token for package publishing (write-only)
+
+**No .env File:**
+- Application does not use environment variables for configuration
+- All tool parameters passed via MCP request arguments
+- No sensitive configuration stored in codebase
 
 ## Webhooks & Callbacks
 
 **Incoming:**
-- GitHub webhooks on release creation trigger `.github/workflows/publish.yml`
+- None - Server is not webhook-capable
+- Operates in request-response mode only via MCP protocol
 
 **Outgoing:**
-- npm registry notifications (implicit via pnpm publish)
+- None - Server does not make outbound API calls or trigger webhooks
 
-## Scanning & Monitoring
+## Version Control Integration
 
-**Gitleaks (Pre-commit):**
-- Secret scanning via Docker container: `zricethezav/gitleaks:latest`
-- Runs in pre-commit hook: `.husky/pre-commit`
-- Scans staged files only: `docker run ... protect --source='/path' --staged`
-- Optional: skips gracefully if Docker unavailable
-- Command: `echo "Docker not found, skipping gitleaks scan"`
+**Pre-commit Hooks (`.husky/pre-commit`):**
+1. commitlint - Validates conventional commit format
+2. prettier - Auto-formats staged files (`.ts`, `.js`, `.json`, `.md`)
+3. gitleaks - Scans for secrets (Docker-based, skips gracefully if unavailable)
 
-**Nx Cloud:**
-- Optional cloud integration configured in `nx.json`
-- nxCloudId: 68f24bee9c26fa57d50d4ecc
-
-## Data Storage
-
-**Databases:**
-- Not used - Analysis tool operates on git repository data only
-
-**File Storage:**
-- Local filesystem only
-- Output written to caller-specified paths via `outputPath` parameter
-- Output format: JSON files written via `writeFileSync()`
-- No cloud storage integration
-
-**Caching:**
-- GitHub Actions: pnpm cache (node_modules)
-- No external caching service
-
-## No External Integrations
-
-**Missing/Not Used:**
-- No database (SQLite, PostgreSQL, MongoDB, etc.)
-- No external authentication provider (Auth0, Okta, etc.)
-- No third-party API integrations
-- No message queues (Redis, RabbitMQ, etc.)
-- No analytics or observability platforms
-- No container registry (Docker Hub, ECR, etc.)
-- No logging aggregation service
-- No CDN or external caching
+**No External VCS Integrations:**
+- GitHub Actions used for CI/CD (native GitHub integration)
+- No Slack, Discord, or other notification integrations
 
 ---
 
