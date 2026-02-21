@@ -48,34 +48,40 @@ git-forensics-mcp/
 ## Directory Purposes
 
 **src/:**
+
 - Purpose: All TypeScript source code for the MCP server
 - Contains: Single index.ts file with GitAnalysisServer class
 - Key files: `src/index.ts` (the entire implementation)
 
 **build/:**
+
 - Purpose: Compiled JavaScript output from TypeScript
 - Contains: index.js (executable), index.d.ts (type definitions), index.js.map (source maps)
 - Generated: During `pnpm build` command via TypeScript compiler (tsconfig.json outDir)
 - Committed: No, generated artifact (in .gitignore)
 
 **.planning/codebase/:**
+
 - Purpose: GSD (Get Shit Done) framework codebase analysis documents
 - Contains: ARCHITECTURE.md, STRUCTURE.md, CONVENTIONS.md, TESTING.md, STACK.md, INTEGRATIONS.md, CONCERNS.md
 - Generated: During `/gsd:map-codebase` command execution
 - Committed: Yes, serves as reference for planning and implementation phases
 
 **.husky/:**
+
 - Purpose: Git hooks for pre-commit automation
 - Contains: pre-commit hook script that runs commitlint, prettier, gitleaks
 - Committed: Yes, enforces commit standards
 
 **.github/workflows/:**
+
 - Purpose: GitHub Actions CI/CD automation
 - Contains: release.yml (version bump and tagging), publish.yml (npm publishing)
 - Triggers: On push to main with conventional commit format
 - Committed: Yes, part of release automation
 
 **sessions/, .claude/, .claude/get-shit-done/:**
+
 - Purpose: Claude development framework and collaboration tools
 - Contains: Task management, DAIC mode protocols, GSD templates
 - Committed: Yes, supports collaborative development workflow
@@ -83,11 +89,13 @@ git-forensics-mcp/
 ## Key File Locations
 
 **Entry Points:**
+
 - `src/index.ts`: Main server file with shebang (line 1) - becomes executable after build
 - `build/index.js`: CLI entry point after compilation (main in package.json)
 - Package bin: `git-forensics-mcp` symlink points to build/index.js after npm install
 
 **Configuration:**
+
 - `tsconfig.json`: TypeScript compiler settings (target ES2020, strict mode, outDir: build)
 - `package.json`: Dependencies, scripts, npm metadata
 - `nx.json`: Nx workspace configuration
@@ -97,6 +105,7 @@ git-forensics-mcp/
 - `.prettier/ignore`: Files excluded from formatting
 
 **Core Logic:**
+
 - `src/index.ts` (lines 43-627): GitAnalysisServer class
   - Lines 68-225: Tool registration (ListToolsRequestSchema handler, tool definitions)
   - Lines 227-341: Tool handlers (branch overview, time period, file changes, merge recommendations)
@@ -105,6 +114,7 @@ git-forensics-mcp/
   - Lines 547-617: Summary generation and helper utilities
 
 **Documentation:**
+
 - `CLAUDE.md`: Development guidance (build commands, architecture notes, testing via inspector)
 - `README.md`: Project overview, usage examples, tool descriptions
 - `AGENTS.md`: MCP agents documentation
@@ -112,18 +122,21 @@ git-forensics-mcp/
 ## Naming Conventions
 
 **Files:**
+
 - TypeScript: `*.ts` extension only
 - Single main file: `index.ts` (standard Node.js convention)
 - Config files: `*.config.cjs` or `*.config.json` (CommonJS config)
 - Generated: no special suffix (build/ is separate directory)
 
 **Directories:**
+
 - Source: `src/` (standard convention)
 - Compiled: `build/` (tsconfig outDir)
 - Config: Root level (package.json, tsconfig.json, etc.)
 - Hidden: `.` prefix (.github, .husky, .planning, .claude, .git, .gitignore)
 
 **Functions:**
+
 - Private methods in class: snake_case with underscore prefix (not used explicitly but implied)
   - Examples: `getLastCommit()`, `getCommitCount()`, `getMergeBase()`
   - Examples: `summarizeActivity()`, `categorizeCommits()`, `analyzeConflicts()`
@@ -133,12 +146,14 @@ git-forensics-mcp/
   - Examples: `get_branch_overview`, `analyze_time_period`, `analyze_file_changes`, `get_merge_recommendations`
 
 **Variables:**
+
 - Commit objects: `{ hash: string; date: string; message: string; branch?: string }`
 - Collections: `branches: string[]`, `files: string[]`, `commits: Array<...>`
 - Maps: `changedFiles: Map<string, string[]>` for file-to-branches tracking
 - Results: `analysis`, `result`, `summary`, `overview` for output objects
 
 **Types/Interfaces:**
+
 - Request arguments: `BranchOverviewArgs`, `TimePeriodArgs`, `FileChangesArgs`, `MergeRecommendationsArgs`
 - All interfaces end with "Args" suffix for clarity
 - All exported as `interface` at top of file (lines 14-41)
@@ -146,6 +161,7 @@ git-forensics-mcp/
 ## Where to Add New Code
 
 **New Tool (Analysis Type):**
+
 1. Define interface at top: `interface NewToolArgs { repoPath: string; branches: string[]; outputPath: string; /* extra fields */ }`
 2. Add tool definition in `setupToolHandlers()` (inside `tools` array, lines 70-176)
 3. Add case to `CallToolRequestSchema` handler switch statement (lines 181-212)
@@ -153,12 +169,14 @@ git-forensics-mcp/
 5. Add analysis methods as needed following existing patterns (git execution → analysis → summary)
 
 **New Git Query Function:**
+
 - Add to "Git Command Execution Layer" section (after line 399)
 - Follow pattern: `private functionName(repoPath: string, ...): ReturnType { return execSync(\`cd "${repoPath}" && git ...\`, { encoding: 'utf8' }).trim(); }`
 - Parse output into typed objects if multi-field (pipe-delimited)
 - Always use .trim() to remove trailing newlines
 
 **New Analysis Function:**
+
 - Add to "Analysis Layer" section (lines 401-543)
 - Follow naming pattern: verb-noun or analyze/assess/determine/generate
 - Accept parsed git data (commits, files, etc.) not raw git output
@@ -170,6 +188,7 @@ git-forensics-mcp/
   - `determineMergeStrategy()` - makes recommendations
 
 **New Summary Generator:**
+
 - Add to "Summary/Output Layer" section (after line 547)
 - Follow pattern: `private generateXyzSummary(analysis: ...) { /* calculations */ return { /* summary object */ } }`
 - Called by tool handlers before writeFileSync
@@ -178,24 +197,28 @@ git-forensics-mcp/
 ## Special Directories
 
 **build/:**
+
 - Purpose: Compiled TypeScript output
 - Generated: Yes (during `pnpm build`)
 - Committed: No (listed in .gitignore)
 - Contents: index.js (executable), index.d.ts (types), index.js.map (sourcemap)
 
 **.planning/codebase/:**
+
 - Purpose: GSD framework analysis documents
 - Generated: Yes (during `/gsd:map-codebase` command)
 - Committed: Yes (checked into git for reference)
 - Used by: `/gsd:plan-phase` and `/gsd:execute-phase` commands
 
 **node_modules/:**
+
 - Purpose: npm dependencies
 - Generated: Yes (during `pnpm install`)
 - Committed: No (listed in .gitignore)
 - Key packages: @modelcontextprotocol/sdk, typescript, prettier, commitlint
 
 **.git/:**
+
 - Purpose: Git version control
 - Generated: Yes (during `git init` or clone)
 - Committed: N/A (git metadata)
@@ -208,16 +231,18 @@ git-forensics-mcp/
 **No barrel files:** Single-file design eliminates need for index re-exports.
 
 **Execution model:**
+
 - Starts with shebang: `#!/usr/bin/env node`
 - Instantiates server: `const server = new GitAnalysisServer();`
 - Runs server: `server.run().catch(console.error);`
 - Never exported as module (designed for CLI execution)
 
 **For npm publish:**
+
 - package.json `main` field: `build/index.js`
 - package.json `bin` field: `{ "git-forensics-mcp": "./build/index.js" }`
 - Allows installation via npm and execution as CLI command
 
 ---
 
-*Structure analysis: 2026-02-07*
+_Structure analysis: 2026-02-07_

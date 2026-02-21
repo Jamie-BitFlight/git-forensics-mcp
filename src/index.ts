@@ -8,8 +8,14 @@ import {
   McpError,
 } from '@modelcontextprotocol/sdk/types.js';
 import { execSync } from 'child_process';
-import { writeFileSync } from 'fs';
-import { join } from 'path';
+import { readFileSync, writeFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const { version: packageVersion } = JSON.parse(
+  readFileSync(join(__dirname, '..', 'package.json'), 'utf8')
+) as { version: string };
 
 interface BranchOverviewArgs {
   repoPath: string;
@@ -47,7 +53,7 @@ class GitAnalysisServer {
     this.server = new Server(
       {
         name: 'git-analysis-server',
-        version: '0.1.0',
+        version: packageVersion,
       },
       {
         capabilities: {
@@ -211,6 +217,9 @@ class GitAnalysisServer {
             throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${request.params.name}`);
         }
       } catch (error) {
+        if (error instanceof McpError) {
+          throw error;
+        }
         return {
           content: [
             {
@@ -341,11 +350,11 @@ class GitAnalysisServer {
   }
 
   private getLastCommit(repoPath: string, branch: string) {
-    const output = execSync(`cd "${repoPath}" && git log -1 --format="%H|%aI|%s" ${branch}`, {
+    const output = execSync(`cd "${repoPath}" && git log -1 --format="%H|%aI|%s" "${branch}"`, {
       encoding: 'utf8',
     }).trim();
-    const [hash, date, message] = output.split('|');
-    return { hash, date, message, branch };
+    const [hash, date, ...messageParts] = output.split('|');
+    return { hash, date, message: messageParts.join('|'), branch };
   }
 
   private getCommitCount(repoPath: string, branch: string): number {
@@ -368,7 +377,7 @@ class GitAnalysisServer {
   ) {
     const output = execSync(
       `cd "${repoPath}" && git log --format="%H|%aI|%s" ` +
-        `--after="${timeRange.start}" --before="${timeRange.end}" ${branch}`,
+        `--after="${timeRange.start}" --before="${timeRange.end}" "${branch}"`,
       { encoding: 'utf8' }
     );
 
@@ -377,14 +386,14 @@ class GitAnalysisServer {
       .split('\n')
       .filter(Boolean)
       .map((line) => {
-        const [hash, date, message] = line.split('|');
-        return { hash, date, message, branch };
+        const [hash, date, ...messageParts] = line.split('|');
+        return { hash, date, message: messageParts.join('|'), branch };
       });
   }
 
   private getFileHistory(repoPath: string, branch: string, file: string) {
     const output = execSync(
-      `cd "${repoPath}" && git log --format="%H|%aI|%s" ${branch} -- ${file}`,
+      `cd "${repoPath}" && git log --format="%H|%aI|%s" "${branch}" -- "${file}"`,
       { encoding: 'utf8' }
     );
 
@@ -393,8 +402,8 @@ class GitAnalysisServer {
       .split('\n')
       .filter(Boolean)
       .map((line) => {
-        const [hash, date, message] = line.split('|');
-        return { hash, date, message, branch };
+        const [hash, date, ...messageParts] = line.split('|');
+        return { hash, date, message: messageParts.join('|'), branch };
       });
   }
 
@@ -445,11 +454,13 @@ class GitAnalysisServer {
   private findOverlappingChanges(
     branchChanges: Array<{ branch: string; history: Array<{ date: string }> }>
   ) {
-    const timeRanges = branchChanges.map(({ branch, history }) => ({
-      branch,
-      start: history[history.length - 1]?.date,
-      end: history[0]?.date,
-    }));
+    const timeRanges = branchChanges
+      .filter(({ history }) => history.length > 0)
+      .map(({ branch, history }) => ({
+        branch,
+        start: history[history.length - 1].date,
+        end: history[0].date,
+      }));
 
     return timeRanges
       .flatMap((range1, i) =>
@@ -504,8 +515,9 @@ class GitAnalysisServer {
     const changedFiles = new Map<string, string[]>();
 
     branches.forEach((branch) => {
+      if (branch === branches[0]) return;
       const files = execSync(
-        `cd "${repoPath}" && git diff --name-only $(git merge-base ${branches[0]} ${branch})..${branch}`,
+        `cd "${repoPath}" && git diff --name-only "$(git merge-base "${branches[0]}" "${branch}")".."${branch}"`,
         { encoding: 'utf8' }
       )
         .trim()
@@ -594,7 +606,7 @@ class GitAnalysisServer {
       totalFiles: analysis.length,
       filesWithConflicts: riskLevels.filter((level) => level !== 'low').length,
       highRiskFiles: riskLevels.filter((level) => level === 'high').length,
-      recommendedReviewOrder: analysis
+      recommendedReviewOrder: [...analysis]
         .sort(
           (a, b) =>
             this.riskToNumber(b.conflicts.riskLevel) - this.riskToNumber(a.conflicts.riskLevel)

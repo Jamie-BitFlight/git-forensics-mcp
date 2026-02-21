@@ -5,15 +5,18 @@
 ## Test Framework
 
 **Current Status:**
+
 - No test runner configured (Jest, Vitest, Mocha, etc.)
 - No automated test suite
 - Per CLAUDE.md: "No test runner or linter is currently configured."
 
 **Manual Testing Approach:**
+
 - MCP Inspector CLI for testing server tools
 - Manual verification of JSON output files
 
 **Run Commands:**
+
 ```bash
 pnpm tools:list           # List available tools via inspector
 
@@ -28,11 +31,13 @@ pnpm inspect:method tools/call \
 ## Test File Organization
 
 **Current State:**
+
 - No test files present in repository
 - All testing is manual via MCP Inspector CLI
 - No separate test directories
 
 **Where Tests Should Go (if implemented):**
+
 - Suggested pattern: `src/index.test.ts` or `src/index.spec.ts`
 - Could organize by tool:
   - `__tests__/branch-overview.test.ts`
@@ -52,6 +57,7 @@ Tools are tested manually using the MCP Inspector CLI. Test sequence:
 4. Check for expected structure and data
 
 **Example Testing Flow:**
+
 ```bash
 # Build first
 pnpm build
@@ -70,6 +76,7 @@ cat /tmp/overview.json | jq '.'
 ## What to Test (if test suite added)
 
 **Tool Invocation:**
+
 - Tool parameter validation in `src/index.ts` lines 184-210:
   - Missing `repoPath` throws `McpError(ErrorCode.InvalidParams)`
   - Missing `branches` throws error
@@ -77,12 +84,14 @@ cat /tmp/overview.json | jq '.'
   - Invalid tool name throws `McpError(ErrorCode.MethodNotFound)`
 
 **Handler Methods (lines 227-341):**
+
 - `handleBranchOverview`: validates output contains branch summary and overview
 - `handleTimePeriodAnalysis`: validates commits filtered by date range correctly
 - `handleFileChangesAnalysis`: validates file conflict analysis
 - `handleMergeRecommendations`: validates merge strategy recommendations
 
 **Git Operations (lines 343-399):**
+
 - `getLastCommit`: parses git log output correctly
 - `getCommitCount`: returns numeric count
 - `getMergeBase`: identifies common ancestor
@@ -90,6 +99,7 @@ cat /tmp/overview.json | jq '.'
 - `getFileHistory`: retrieves commit history for specific file
 
 **Analysis Methods (lines 401-604):**
+
 - `categorizeCommits`: classifies commits by message prefix (feat/fix/refactor/docs/other)
 - `findOverlappingChanges`: identifies time range overlaps between branches
 - `assessRiskLevel`: returns low/medium/high based on overlap count
@@ -97,6 +107,7 @@ cat /tmp/overview.json | jq '.'
 - `assessConflictRisks`: identifies file hotspots changed in multiple branches
 
 **Error Handling:**
+
 - Git command failures return `{isError: true}` response
 - Invalid parameters throw errors caught by handler
 - Unknown tools return method not found error
@@ -104,11 +115,13 @@ cat /tmp/overview.json | jq '.'
 ## Mocking Strategy (if tests implemented)
 
 **What to Mock:**
+
 - `execSync` from `child_process` — git commands should return predictable output
 - `writeFileSync` from `fs` — capture written JSON, don't write to disk in tests
 - File system operations
 
 **Mocking Pattern Example:**
+
 ```typescript
 import { execSync } from 'child_process';
 jest.mock('child_process', () => ({
@@ -121,12 +134,13 @@ jest.mock('child_process', () => ({
 // Or for multiple calls
 const execSyncMock = execSync as jest.Mock;
 execSyncMock
-  .mockReturnValueOnce('abc123')                    // first call
-  .mockReturnValueOnce('5')                         // second call
-  .mockReturnValueOnce('def456');                   // third call
+  .mockReturnValueOnce('abc123') // first call
+  .mockReturnValueOnce('5') // second call
+  .mockReturnValueOnce('def456'); // third call
 ```
 
 **What NOT to Mock:**
+
 - Core analysis methods like `categorizeCommits`, `findOverlappingChanges` — test actual logic
 - Type parsing and transformation logic
 - Risk assessment algorithms
@@ -134,6 +148,7 @@ execSyncMock
 ## Data Fixtures (if tests implemented)
 
 **Git Log Output Fixtures:**
+
 ```typescript
 // Mock git log output with pipe-delimited format used in src/index.ts
 const mockGitLogOutput = `abc123|2024-01-15T10:30:00Z|feat: add new feature
@@ -148,6 +163,7 @@ const mockMergeBase = 'xyz789\n';
 ```
 
 **Test Data Organization:**
+
 - Location: `src/__fixtures__/` or inline in test files (given single-file codebase)
 - Fixture format: pipe-delimited strings matching git command output
 - File format examples:
@@ -158,11 +174,13 @@ const mockMergeBase = 'xyz789\n';
 ## Coverage
 
 **Current Status:**
+
 - No coverage configured or tracked
 - Manual testing only
 - No coverage requirements enforced
 
 **If Coverage Added:**
+
 - Aim for high coverage of core analysis methods (lines 401-617)
 - Handler methods (lines 227-341) should have full coverage
 - Git operation wrappers (lines 343-399) should test both success and error cases
@@ -183,18 +201,21 @@ src/
 **By Test Type:**
 
 **Unit Tests:**
+
 - Individual methods with mocked dependencies
 - Examples: `categorizeCommits()`, `assessRiskLevel()`, `findOverlappingChanges()`
 - Mock execSync for git operations
 - Test with sample data
 
 **Integration Tests:**
+
 - Full tool invocation through request handler
 - Mock execSync to return realistic git output
 - Verify complete JSON output structure
 - Test error paths (invalid params, missing params)
 
 **Manual Tests (current approach):**
+
 - Via MCP Inspector CLI
 - Verify against real git repositories
 - Check JSON output structure and content
@@ -203,6 +224,7 @@ src/
 ## Error Testing
 
 **Current Error Handling (src/index.ts lines 179-224):**
+
 ```typescript
 try {
   switch (request.params.name) {
@@ -216,13 +238,14 @@ try {
   }
 } catch (error) {
   return {
-    content: [{type: 'text', text: `Git analysis error: ...`}],
+    content: [{ type: 'text', text: `Git analysis error: ...` }],
     isError: true,
   };
 }
 ```
 
 **Test Scenarios (if implemented):**
+
 - Missing required parameter → McpError with InvalidParams
 - Unknown tool name → McpError with MethodNotFound
 - Git command fails → return error response with isError: true
@@ -231,4 +254,4 @@ try {
 
 ---
 
-*Testing analysis: 2026-02-07*
+_Testing analysis: 2026-02-07_
