@@ -7,8 +7,8 @@ on:
       - main
     paths:
       # ignore push events that only include package.json or CHANGELOG.md files
-      - "!package.json"
-      - "!CHANGELOG.md"
+      - '!package.json'
+      - '!CHANGELOG.md'
 
 permissions:
   contents: write
@@ -26,7 +26,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           lfs: true

@@ -80,6 +80,7 @@ Commits must follow `<type>(<scope>): <subject>` format. Types that trigger rele
 ## Pre-commit Hook
 
 The Husky pre-commit hook (`.husky/pre-commit`) runs three checks in sequence:
+
 1. **commitlint** — validates conventional commit format
 2. **prettier** — auto-formats staged files
 3. **gitleaks** — scans for secrets (requires Docker; skips gracefully if Docker unavailable)
