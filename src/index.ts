@@ -350,7 +350,8 @@ class GitAnalysisServer {
   }
 
   private getLastCommit(repoPath: string, branch: string) {
-    const output = execSync(`cd "${repoPath}" && git log -1 --format="%H|%aI|%s" "${branch}"`, {
+    const output = execSync(`git log -1 --format="%H|%aI|%s" "${branch}"`, {
+      cwd: repoPath,
       encoding: 'utf8',
     }).trim();
     const [hash, date, ...messageParts] = output.split('|');
@@ -359,13 +360,14 @@ class GitAnalysisServer {
 
   private getCommitCount(repoPath: string, branch: string): number {
     return parseInt(
-      execSync(`cd "${repoPath}" && git rev-list --count "${branch}"`, { encoding: 'utf8' }).trim(),
+      execSync(`git rev-list --count "${branch}"`, { cwd: repoPath, encoding: 'utf8' }).trim(),
       10
     );
   }
 
   private getMergeBase(repoPath: string, branch1: string, branch2: string): string {
-    return execSync(`cd "${repoPath}" && git merge-base "${branch1}" "${branch2}"`, {
+    return execSync(`git merge-base "${branch1}" "${branch2}"`, {
+      cwd: repoPath,
       encoding: 'utf8',
     }).trim();
   }
@@ -376,9 +378,8 @@ class GitAnalysisServer {
     timeRange: { start: string; end: string }
   ) {
     const output = execSync(
-      `cd "${repoPath}" && git log --format="%H|%aI|%s" ` +
-        `--after="${timeRange.start}" --before="${timeRange.end}" "${branch}"`,
-      { encoding: 'utf8' }
+      `git log --format="%H|%aI|%s" --after="${timeRange.start}" --before="${timeRange.end}" "${branch}"`,
+      { cwd: repoPath, encoding: 'utf8' }
     );
 
     return output
@@ -392,10 +393,10 @@ class GitAnalysisServer {
   }
 
   private getFileHistory(repoPath: string, branch: string, file: string) {
-    const output = execSync(
-      `cd "${repoPath}" && git log --format="%H|%aI|%s" "${branch}" -- "${file}"`,
-      { encoding: 'utf8' }
-    );
+    const output = execSync(`git log --format="%H|%aI|%s" "${branch}" -- "${file}"`, {
+      cwd: repoPath,
+      encoding: 'utf8',
+    });
 
     return output
       .trim()
@@ -517,10 +518,10 @@ class GitAnalysisServer {
     branches.forEach((branch) => {
       if (branch === branches[0]) return;
       const mergeBase = this.getMergeBase(repoPath, branches[0], branch);
-      const files = execSync(
-        `cd "${repoPath}" && git diff --name-only "${mergeBase}".."${branch}"`,
-        { encoding: 'utf8' }
-      )
+      const files = execSync(`git diff --name-only "${mergeBase}".."${branch}"`, {
+        cwd: repoPath,
+        encoding: 'utf8',
+      })
         .trim()
         .split('\n')
         .filter(Boolean);
