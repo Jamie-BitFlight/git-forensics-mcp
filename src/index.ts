@@ -359,13 +359,13 @@ class GitAnalysisServer {
 
   private getCommitCount(repoPath: string, branch: string): number {
     return parseInt(
-      execSync(`cd "${repoPath}" && git rev-list --count ${branch}`, { encoding: 'utf8' }).trim(),
+      execSync(`cd "${repoPath}" && git rev-list --count "${branch}"`, { encoding: 'utf8' }).trim(),
       10
     );
   }
 
   private getMergeBase(repoPath: string, branch1: string, branch2: string): string {
-    return execSync(`cd "${repoPath}" && git merge-base ${branch1} ${branch2}`, {
+    return execSync(`cd "${repoPath}" && git merge-base "${branch1}" "${branch2}"`, {
       encoding: 'utf8',
     }).trim();
   }
@@ -516,8 +516,9 @@ class GitAnalysisServer {
 
     branches.forEach((branch) => {
       if (branch === branches[0]) return;
+      const mergeBase = this.getMergeBase(repoPath, branches[0], branch);
       const files = execSync(
-        `cd "${repoPath}" && git diff --name-only "$(git merge-base "${branches[0]}" "${branch}")".."${branch}"`,
+        `cd "${repoPath}" && git diff --name-only "${mergeBase}".."${branch}"`,
         { encoding: 'utf8' }
       )
         .trim()
