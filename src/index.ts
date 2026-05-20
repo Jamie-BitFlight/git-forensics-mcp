@@ -386,7 +386,7 @@ class GitAnalysisServer {
       .trim()
       .split('\n')
       .filter(Boolean)
-      .map((line) => {
+      .map((line: string) => {
         const [hash, date, ...messageParts] = line.split('|');
         return { hash, date, message: messageParts.join('|'), branch };
       });
@@ -402,7 +402,7 @@ class GitAnalysisServer {
       .trim()
       .split('\n')
       .filter(Boolean)
-      .map((line) => {
+      .map((line: string) => {
         const [hash, date, ...messageParts] = line.split('|');
         return { hash, date, message: messageParts.join('|'), branch };
       });
@@ -526,7 +526,7 @@ class GitAnalysisServer {
         .split('\n')
         .filter(Boolean);
 
-      files.forEach((file) => {
+      files.forEach((file: string) => {
         const current = changedFiles.get(file) || [];
         changedFiles.set(file, [...current, branch]);
       });
