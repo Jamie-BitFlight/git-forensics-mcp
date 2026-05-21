@@ -8,12 +8,12 @@
 
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 
-const REPO_PATH = '/home/user/git-forensics-mcp';
-const TMP = tmpdir();
+const REPO_PATH = process.env['REPO_PATH'] ?? process.cwd();
+const TMP = mkdtempSync(join(tmpdir(), 'gfm-validate-'));
 
 const EXPECTED_TOOLS = [
   'get_branch_overview',
@@ -200,6 +200,11 @@ async function main(): Promise<void> {
   // ── Cleanup ────────────────────────────────────────────────────────────────
   try {
     await client.close();
+  } catch {
+    // best-effort
+  }
+  try {
+    rmSync(TMP, { recursive: true, force: true });
   } catch {
     // best-effort
   }
